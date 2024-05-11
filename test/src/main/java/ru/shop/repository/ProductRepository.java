@@ -1,5 +1,10 @@
 package ru.shop.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.shop.model.Product;
 
 import java.util.ArrayList;
@@ -7,24 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class ProductRepository implements IRepository<Product> {
+@Repository
+public interface ProductRepository extends JpaRepository<Product, UUID> {
 
-    List<Product> products = new ArrayList<>();
-
-    public void save(Product product) {
-        products.add(product);
-    }
-
-    public List<Product> findAll() {
-        return products;
-    }
-
-    public Optional<Product> findById(UUID id){
-        for(var i: products){
-            if(i.getId().equals(id)){
-                return Optional.of(i);
-            }
-        }
-        return Optional.empty();
-    }
 }

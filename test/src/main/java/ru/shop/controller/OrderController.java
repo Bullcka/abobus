@@ -1,38 +1,46 @@
 package ru.shop.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import ru.shop.model.Customer;
 import ru.shop.model.Order;
+import ru.shop.model.Product;
 import ru.shop.service.CustomerService;
 import ru.shop.service.OrderService;
+import ru.shop.service.ProductService;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/order")
+@RequiredArgsConstructor
 public class OrderController {
-    OrderService orderService;
-    CustomerService customerService;
+    private final OrderService orderService;
+    private final CustomerService customerService;
+    private final ProductService productService;
 
-    @GetMapping("/get")
-    public List<Order> getAllOrder() {
+    @GetMapping
+    public List<Order> getAllOrders() {
         return orderService.findAll();
     }
 
     @GetMapping("/customer/{customerId}")
     public List<Order> getByCustomerId(@PathVariable UUID customerId) {
-        return orderService.findByCustomer(customerService.getById(customerId));
+        return orderService.findByCustomerId(customerId);
     }
 
     @GetMapping("/customer/{customerId}/total")
     public long getCustomerTotal(UUID customerId) {
-        return orderService.getTotalCustomerAmount(customerService.getById(customerId));
+        Customer customer = customerService.getById(customerId);
+        return orderService.getTotalCustomerAmount(customer);
+    }
+
+    @PostMapping
+    public void save(UUID productId, UUID customerId, int count) {
+        Customer customer = customerService.getById(customerId);
+        Product product = productService.getById(productId);
+        orderService.add(customer, product, count);
     }
 }
 

@@ -1,18 +1,24 @@
 package ru.shop.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.shop.exception.BadOrderCountException;
+import ru.shop.exception.EntityNotFoundException;
 import ru.shop.model.Product;
+import ru.shop.model.ProductType;
 import ru.shop.service.CustomerService;
 import ru.shop.service.ProductService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/product")
+@RequiredArgsConstructor
 public class ProductController {
-    ProductService productService;
+    private final ProductService productService;
 
-    @GetMapping("/get")
+    @GetMapping
     public List<Product> getAllProducts() {
         return productService.findAll();
     }
@@ -23,5 +29,12 @@ public class ProductController {
     }
 
     @PostMapping
-    public void save(@RequestBody Product product)
+    public void save(@RequestBody Product product) {
+        productService.save(product);
+    }
+
+    @GetMapping("/type/{productType}")
+    public List<Product> getByProductType(@PathVariable ProductType productType) {
+        return productService.findByProductType(productType);
+    }
 }
